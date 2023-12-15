@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\PenggunaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/dashboard');
 });
 
 Auth::routes();
@@ -25,17 +28,22 @@ Route::middleware(['auth'])
         return view('dashboard.index');
     });
 
-    Route::get('/keuangan', function () {
-        return view('/keuangan.index');
-    });
+    Route::resource('keuangan', KeuanganController::class);
+    Route::resource('kategori', KategoriController::class);
+    Route::resource('pengguna', PenggunaController::class);
 
-    Route::get('/kategori', function () {
-        return view('/kategori.index');
-    });
 
-    Route::get('/pengguna', function () {
-        return view('/pengguna.index');
-    });
+    // Route::get('/keuangan', function () {
+    //     return view('/keuangan.index');
+    // });
+
+    // Route::get('/kategori', function () {
+    //     return view('/kategori.index');
+    // });
+
+    // Route::get('/pengguna', function () {
+    //     return view('/pengguna.index');
+    // });
 
 });
 

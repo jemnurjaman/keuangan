@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Keuangan;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
-use illuminate\Support\Facades\Auth;
-use illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class KeuanganController extends Controller
 {
@@ -15,8 +15,10 @@ class KeuanganController extends Controller
      */
     public function index()
     {
-        $keuangan = keuangan::all();
-        return view('keuangan.index', compact('keuangan'));
+        $keuangan = Keuangan::all();
+        $kategori = Kategori::all();
+
+        return view('keuangan.index', compact('keuangan', 'kategori'));
     }
 
     /**
@@ -24,7 +26,7 @@ class KeuanganController extends Controller
      */
     public function create()
     {
-        $Kategori = Kategori::all();
+        $kategori = Kategori::all();
 
         return view('keuangan.create', compact('kategori'));
     }
@@ -35,19 +37,22 @@ class KeuanganController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_kategori'   => 'required',
-            'jumlah'        => 'required',
-            'deskripsi'     => 'required',
-            'jenis'         => 'required',
+            'id_kategori' => 'required',
+            'jumlah' => 'required',
+            'deskripsi' => 'required',
+            'jenis' => 'required',
         ]);
 
         Keuangan::create([
             'id_kategori' => $request->id_kategori,
             'id_pengguna' => Auth::user()->id,
-            'jumlah'      => $request->jumlah,
+            'jumlah' => $request->jumlah,
+            'tanggal' => Carbon::now(),
+            'deskripsi' => $request->deskripsi,
+            'jenis' => $request->jenis,
         ]);
 
-        return redirect(route('keuangan.index'))->withSuccess('Data keuangan baru berhasil dibuat');
+        return redirect(route('keuangan.index'))->withSuccess('Data Keuangan baru berhasil dibuat');
     }
 
     /**
@@ -61,9 +66,9 @@ class KeuanganController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(keuangan $keuangan)
+    public function edit(Keuangan $keuangan)
     {
-        $kategori - Kategori::all();
+        $kategori = Kategori::all();
 
         return view('keuangan.edit', compact('keuangan', 'kategori'));
     }
@@ -71,21 +76,23 @@ class KeuanganController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Keuangan $keuangan)
     {
         $request->validate([
-            'id_kategori'   => 'required',
-            'jumlah'        => 'required',
-            'deskripsi'     => 'required',
-            'jenis'         => 'required',
+            'id_kategori' => 'required',
+            'jumlah' => 'required',
+            'deskripsi' => 'required',
+            'jenis' => 'required',
         ]);
 
         $keuangan->update([
-            'id_kategori'  => $request->id_kategori,
-            'jumlah'    => $request->jumlah,
-            'deskripsi'    => $request->deskripsi,
-            'jenis'        => $request->jenis,
+            'id_kategori' => $request->id_kategori,
+            'jumlah' => $request->jumlah,
+            'deskripsi' => $request->deskripsi,
+            'jenis' => $request->jenis,
         ]);
+
+        return redirect(route('keuangan.index'))->withSuccess('Data Keuangan berhasil diubah');
     }
 
     /**
@@ -93,8 +100,7 @@ class KeuanganController extends Controller
      */
     public function destroy(Keuangan $keuangan)
     {
-        @keuangan->delete();
-
-        return redirect(route('keuangan.index'))->withSuccess('Data berhasil dihapus');
+        $keuangan->delete();
+        return redirect(route('keuangan.index'))->withSuccess('Data Keuangan berhasil dihapus');
     }
 }
